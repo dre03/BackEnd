@@ -15,7 +15,7 @@ class StudentController extends Controller
 
         // menggunakan model student untuk select data
         $students = Student::all();
-        if($students){
+        if(count($students) == true){
             $data = [
                 'message' => 'get all students',
                 'data' => $students,
@@ -39,21 +39,22 @@ class StudentController extends Controller
     // add data student
     //membuat method store
     function store(Request $request){
-        //menangkap request
-        $input =[
-            'nama' => $request->nama,
-            'nim' => $request->nim,
-            'email' => $request->email,
-            'jurusan' => $request->jurusan,
-        ];
+        //membuat validate
+        $validatedData = $request->validate([
+            // kolom => rules/rules
+            'nama' => 'required',
+            'nim' => 'numeric|required',
+            'email' => 'email|required',
+            'jurusan' => 'required',
+        ]);
         // menggunakan student untuk insert data
-        $student = Student::create($input);
-        $data = [
-            'message' => 'Data student created succesfulyy',
-            'data' => $student,
-        ];
-        //mengembalikan data (json) status code 201
-        return response()->json($data, 201);
+        $student = Student::create($validatedData);
+            $data = [
+                'message' => 'Data student created succesfulyy',
+                'data' => $student,
+            ];
+            //mengembalikan data (json) status code 201
+            return response()->json($data, 201);
     }
 
     //method get detail resource student
